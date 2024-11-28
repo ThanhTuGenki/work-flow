@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowExecutionTrigger {
+  MANUAL
+  SCHEDULED
+}
+
+model Workflow {
+  id          String         @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  definition  String         @db.Text
+  status      WorkflowStatus
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  lastRunAt     DateTime?
+  lastRunId     String?
+  lastRunStatus WorkflowExecutionStatus?
+
+  executions WorkflowExecution[]
+
+  // User cannot have two workflow ưith the same name
+  @@unique([name, userId])
+}
+
+model WorkflowExecution {
+  id          String                   @id @default(cuid())
+  workflowId  String
+  userId      String
+  trigger     WorkflowExecutionTrigger
+  status      WorkflowExecutionStatus
+  createdAt   DateTime                 @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  definition  String                   @db.Text
+
+  creditsConsumed Int @default(0)
+
+  phases   ExecutionPhase[]
+  workflow Workflow         @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+}
+
+enum ExecutionPhaseStatus {
+  CREATED
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model ExecutionPhase {
+  id                  String               @id @default(cuid())
+  userId              String
+  status              ExecutionPhaseStatus
+  number              Int
+  node                String               @db.Text
+  name                String
+  startedAt           DateTime?
+  completedAt         DateTime?
+  inputs              String?              @db.LongText
+  outputs             String?              @db.LongText
+  creditsConsumed     Int?
+  workflowExecutionId String
+
+  execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
+  logs      executionLog[]
+}
+
+model executionLog {
+  id               String   @id @default(cuid())
+  logLevel         String
+  message          String   @db.Text
+  timestamp        DateTime @default(now())
+  executionPhaseId String
+
+  executionPhase ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+}
+
+model UserBalance {
+  id      String @id @default(cuid())
+  credits Int    @default(0)
+}
