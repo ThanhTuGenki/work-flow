@@ -49,7 +49,7 @@ function ExecutionViewer({ initialData }: Props) {
         refetchInterval: (q) => q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false
     });
     const phaseDetails = useQuery({
-        queryKey: ['phaseDetails', selectedPhaseId],
+        queryKey: ['phaseDetails', selectedPhaseId, query.data?.status],
         enabled: selectedPhaseId !== null,
         queryFn: () => GetWorkflowPhaseDetails(selectedPhaseId!),
     });

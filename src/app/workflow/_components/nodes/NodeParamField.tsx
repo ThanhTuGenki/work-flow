@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useCallback } from 'react'
-import { TaskParam, TaskPramType } from '../../../../../types/task';
-import StringParam from './param/StringParam';
 import { useReactFlow } from '@xyflow/react';
+import { useCallback } from 'react';
 import { AppNode } from '../../../../../types/appNode';
+import { TaskParam, TaskPramType } from '../../../../../types/task';
 import BrowserInstanceParam from './param/BrowserInstanceParam';
+import SelectParam from './param/SelectParam';
+import StringParam from './param/StringParam';
 
 interface Props {
     nodeId: string;
@@ -35,11 +36,18 @@ function NodeParamField({ param, nodeId, disabled }: Props) {
                 updateNodeParamValue={updateNodeParamValue}
                 disabled={disabled}
             />
-            case TaskPramType.BROWSER_INSTANCE:
-                return <BrowserInstanceParam
+        case TaskPramType.BROWSER_INSTANCE:
+            return <BrowserInstanceParam
+                param={param}
+                value={''}
+                updateNodeParamValue={updateNodeParamValue}
+            />
+            case TaskPramType.SELECT:
+                return <SelectParam
                     param={param}
-                    value={''}
+                    value={value}
                     updateNodeParamValue={updateNodeParamValue}
+                    disabled={disabled}
                 />
         default:
             return (
