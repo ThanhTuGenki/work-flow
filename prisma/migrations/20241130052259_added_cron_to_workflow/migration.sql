@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Workflow` ADD COLUMN `cron` VARCHAR(191) NULL,
+    ADD COLUMN `nextRunAt` DATETIME(3) NULL;

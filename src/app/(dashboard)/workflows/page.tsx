@@ -38,6 +38,7 @@ function UserWorkflowsSkeleton() {
 
 async function UserWorkflows() {
     const workflows = await GetWorkflowsForUser();
+
     if (!workflows) {
         return (
             <Alert variant={"destructive"}>
@@ -62,7 +63,7 @@ async function UserWorkflows() {
                         Click the button below to create your first workflow
                     </div>
                 </div>
-                <CreateWorkflowDialog triggerText='Create your first workflow'/>
+                <CreateWorkflowDialog triggerText='Create your first workflow' />
             </div>
         )
     }
@@ -70,7 +71,7 @@ async function UserWorkflows() {
 
     return (
         <div className="grid grid-cols-1 gap-4">
-            {workflows.map((workflow)=> (
+            {workflows.map((workflow) => (
                 <WorkflowCard key={workflow.id} workflow={workflow} />
             ))}
         </div>

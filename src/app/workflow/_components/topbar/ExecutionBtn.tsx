@@ -3,13 +3,13 @@
 import { Button } from '@/components/ui/button';
 import useExecutionPlan from '@/hooks/useExecutionPlan';
 import { useMutation } from '@tanstack/react-query';
-import { PlayIcon } from 'lucide-react';
+import { PlayIcon, UploadIcon } from 'lucide-react';
 import React from 'react'
 import { RunWorkflow } from '../../../../../actions/workflows/runWorkflow';
 import { toast } from 'sonner';
 import { useReactFlow } from '@xyflow/react';
 
-function ExecuteBtn({ workflowId }: { workflowId: string }) {
+function ExecutionBtn({ workflowId }: { workflowId: string }) {
     const generate = useExecutionPlan();
     const { toObject } = useReactFlow();
     const mutation = useMutation({
@@ -38,9 +38,9 @@ function ExecuteBtn({ workflowId }: { workflowId: string }) {
             }}
         >
             <PlayIcon size={16} className='stroke-orange-400' />
-            ExecuteBtn
+            ExecutionBtn
         </Button>
     )
 }
 
-export default ExecuteBtn
+export default ExecutionBtn

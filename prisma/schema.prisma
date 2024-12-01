@@ -31,18 +31,22 @@ enum WorkflowExecutionTrigger {
 }
 
 model Workflow {
-  id          String         @id @default(cuid())
-  userId      String
-  name        String
-  description String?
-  definition  String         @db.Text
-  status      WorkflowStatus
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  userId        String
+  name          String
+  description   String?
+  definition    String         @db.LongText
+  executionPlan String?        @db.LongText
+  creditsCost   Int            @default(0)
+  status        WorkflowStatus
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  cron          String? // * * * *
 
   lastRunAt     DateTime?
   lastRunId     String?
   lastRunStatus WorkflowExecutionStatus?
+  nextRunAt     DateTime?
 
   executions WorkflowExecution[]
 
@@ -59,7 +63,7 @@ model WorkflowExecution {
   createdAt   DateTime                 @default(now())
   startedAt   DateTime?
   completedAt DateTime?
-  definition  String                   @db.Text
+  definition  String                   @db.LongText
 
   creditsConsumed Int @default(0)
 
@@ -80,7 +84,7 @@ model ExecutionPhase {
   userId              String
   status              ExecutionPhaseStatus
   number              Int
-  node                String               @db.Text
+  node                String               @db.LongText
   name                String
   startedAt           DateTime?
   completedAt         DateTime?

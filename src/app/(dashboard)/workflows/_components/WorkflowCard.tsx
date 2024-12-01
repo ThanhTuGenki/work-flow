@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { WorkflowStatus } from '../../../../../types/workflow';
 import { CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { FileTextIcon, MoreVerticalIcon, PlayIcon, ShuffleIcon, TrashIcon } from 'lucide-react';
+import { CoinsIcon, CornerDownRightIcon, FileTextIcon, MoreVerticalIcon, MoveRightIcon, PlayIcon, ShuffleIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -18,6 +18,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import TooltipWrapper from '@/components/TooltipWrapper';
 import DeleteWorkflowDialog from './DeleteWorkflowDialog';
+import RunBtn from './RunBtn';
+import SchedulerDialog from './SchedulerDialog';
+import { Badge } from '@/components/ui/badge';
 
 const statusColors = {
     [WorkflowStatus.DRAFT]: 'bg-yellow-600 text-yellow-400',
@@ -25,7 +28,7 @@ const statusColors = {
 }
 
 function WorkflowCard({ workflow }: { workflow: Workflow }) {
-    const isDraft = workflow.status = WorkflowStatus.DRAFT;
+    const isDraft = workflow.status === WorkflowStatus.DRAFT;
 
     return (
         <div className='border border-separate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary/30'>
@@ -45,9 +48,18 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
                                 </span>
                             )}
                         </h3>
+                        <SchedulerSection
+                            isDraft={isDraft}
+                            creditsCost={workflow.creditsCost}
+                            workflowId={workflow.id}
+                            cron={workflow.cron}
+                        />
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
+                    {!isDraft && (
+                        <RunBtn workflowId={workflow.id} />
+                    )}
                     <Link href={`/workflow/editor/${workflow.id}`} className={cn(
                         buttonVariants({
                             variant: 'outline',
@@ -69,7 +81,12 @@ function WorkflowActions({ workflowName, workflowId }: { workflowName: string; w
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     return <>
-        <DeleteWorkflowDialog open={showDeleteDialog} setOpen={setShowDeleteDialog} workflowName={workflowName} workflowId={workflowId} />
+        <DeleteWorkflowDialog
+            open={showDeleteDialog}
+            setOpen={setShowDeleteDialog}
+            workflowName={workflowName}
+            workflowId={workflowId}
+        />
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant={'outline'} size={'sm'}>
@@ -94,4 +111,41 @@ function WorkflowActions({ workflowName, workflowId }: { workflowName: string; w
     </>
 }
 
-export default WorkflowCard
+interface SchedulerSectionProps {
+    isDraft: boolean;
+    creditsCost: number;
+    workflowId: string;
+    cron: string | null;
+}
+
+function SchedulerSection({
+    isDraft,
+    creditsCost,
+    workflowId,
+    cron
+}: SchedulerSectionProps) {
+    if (isDraft) return null;
+
+    return <div className="flex items-center gap-2">
+        <CornerDownRightIcon className='w-4 h-4 text-muted-foreground' />
+        <SchedulerDialog
+            workflowId={workflowId}
+            cron={cron}
+            key={`${cron}-${workflowId}`}
+        />
+        <MoveRightIcon className='w-4 h-4 text-muted-foreground' />
+        <TooltipWrapper content='Credit consumption for full run'>
+            <div className="flex items-center gap-3">
+                <Badge
+                    variant={'outline'}
+                    className='space-x-2 text-muted-foreground rounded-sm'
+                >
+                    <CoinsIcon className='w-4 h-4' />
+                    <span className="text-sm">{creditsCost}</span>
+                </Badge>
+            </div>
+        </TooltipWrapper>
+    </div>
+}
+
+export default WorkflowCard;

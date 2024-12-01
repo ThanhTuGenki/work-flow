@@ -79,7 +79,12 @@ function ExecutionViewer({ initialData }: Props) {
                     <ExecutionLabel
                         icon={CircleDashedIcon}
                         label='Status'
-                        value={query.data?.status}
+                        value={
+                            <div className='flex items-center gap-2 font-semibold capitalize'>
+                                <PhaseStatusBadge status={query.data?.status!} />
+                                <span>{query.data?.status}</span>
+                            </div>
+                        }
                     />
                     <ExecutionLabel
                         icon={CalendarIcon}
