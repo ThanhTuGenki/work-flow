@@ -14,15 +14,22 @@ export async function GET(req: Request) {
     },
   });
 
-  console.log("@@@ workflows", workflows.length);
   for (const workflow of workflows) {
     triggerWorkflow(workflow.id);
   }
 
-  return new Response(null, { status: 200 });
+  return Response.json({ workflowsToRun: workflows.length }, { status: 200 });
 }
 
 function triggerWorkflow(id: string) {
   const triggerApiUrl = getAppUrl(`api/workflows/execute?workflowId=${id}`);
-  console.log("@@trigger cron", triggerApiUrl);
+
+  fetch(triggerApiUrl, {
+    headers: {
+      Authorization: `Bearer ${process.env.API_SECRET}`,
+    },
+    cache: "no-cache",
+  }).catch((error) => {
+    console.error("Error trigger workflow with id", id, ":error ->", error);
+  });
 }

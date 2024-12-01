@@ -27,7 +27,7 @@ enum WorkflowExecutionStatus {
 
 enum WorkflowExecutionTrigger {
   MANUAL
-  SCHEDULED
+  CRON
 }
 
 model Workflow {
