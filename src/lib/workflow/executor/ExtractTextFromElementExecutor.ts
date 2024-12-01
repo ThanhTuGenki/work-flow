@@ -30,7 +30,7 @@ export async function ExtractTextFromElementExecutor(
       return false;
     }
 
-    environment.setOutput("Extracted text", extractedText);
+    environment.setOutput("Body", extractedText);
 
     return true;
   } catch (error: any) {

@@ -24,7 +24,7 @@ function StringParam({ param, value, updateNodeParamValue, disabled }: ParamProp
         <div className='space-y-1 p-1 w-full'>
             <Label htmlFor={id} className='flex text-sm'>
                 {param.name}
-                {param.require && <p className='text-red-400 px-2'>*</p>}
+                {param.required && <p className='text-red-400 px-2'>*</p>}
             </Label>
             <Component
                 className='text-xs'

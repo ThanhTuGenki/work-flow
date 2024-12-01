@@ -28,8 +28,9 @@ export function NodeInput({ input, nodeId }: { input: TaskParam; nodeId: string 
     return <div className={
         cn(
             'flex justify-start relative p-3 bg-secondary w-full',
-            hasError && 'bg-destructive/30')
-        }
+            hasError && 'bg-destructive/30',
+        )
+    }
     >
         <NodeParamField param={input} nodeId={nodeId} disabled={isConnected} />
         {!input.hideHandle && (
